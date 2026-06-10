@@ -34,6 +34,39 @@ void yield()
     context_switch(tasks[prev].regs,
                    tasks[next].regs);
 }
+
+/* Escalonamento Preemptivo via Timer (A nova mágica)   */
+void schedule_from_trap(uint64_t *frame)
+{
+    int prev = current;
+    int next = current_algo();
+
+    /* 1. Copiar frame (trap_entry) -> tasks[prev].regs */
+    for (int i = 0; i < 31; i++) {
+        tasks[prev].regs[i] = frame[i];
+    }
+
+    /* 2. Salvar o sepc da task atual */
+    uint64_t prev_pc;
+    asm volatile("csrr %0, sepc" : "=r" (prev_pc));
+    tasks[prev].pc = prev_pc;
+
+    /* 3. Troca a tarefa ativa */
+    current = next;
+
+    /* 4. Copiar tasks[next].regs -> frame (trap_entry) */
+    for (int i = 0; i < 31; i++) {
+        frame[i] = tasks[next].regs[i];
+    }
+
+    uint64_t next_pc = tasks[next].pc;
+    if (next_pc == 0) {
+        next_pc = (uint64_t)tasks[next].entry;
+    }
+    
+    /* 5. Restaurar o sepc da próxima task */
+    asm volatile("csrw sepc, %0" : : "r" (next_pc));
+}
  
 /*   Início   */
 

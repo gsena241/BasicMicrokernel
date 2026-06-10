@@ -1,8 +1,12 @@
 #include "task.h"
 #include "scheduler.h"
 #include "memory.h"
+#include "timer.h" 
+#include "trap.h"  
 
 extern void uart_print(const char*);
+
+extern void trap_entry(void);
 
 /*   Tasks   */
 
@@ -20,7 +24,7 @@ void task1()
         uart_print_uint(memory_free());
         uart_print(" bytes\n\n");
 
-        yield();
+        for (volatile int i = 0; i < 5000000; i++);
     }
 }
 
@@ -38,7 +42,7 @@ void task2()
         uart_print_uint(memory_free());
         uart_print(" bytes\n\n");
 
-        yield();
+        for (volatile int i = 0; i < 5000000; i++);
     }
 }
 
@@ -48,8 +52,15 @@ void kernel_main()
 {
     memory_init();   // OBRIGATÓRIO
 
-    uart_print("\n=== Kernel ===\n");
+    uart_print("\n=== Kernel final ===\n");
 
+    /* 1. Configura o registrador stvec para apontar para o tratador em Assembly */
+    asm volatile("csrw stvec, %0" : : "r" ((uint64_t)trap_entry));
+
+    /* 2. Inicializa o timer do hardware (ex: dispara a cada 100.000 ticks) */
+    timer_init(100000);
+
+    /* 3. Cria as tarefas usando a função nativa do microkernel */
     xTaskCreate(task1, 2048, 1);
     xTaskCreate(task2, 2048, 1);
 
