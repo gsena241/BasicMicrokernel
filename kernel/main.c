@@ -54,13 +54,13 @@ void kernel_main()
 
     uart_print("\n=== Kernel final ===\n");
 
-    /* 1. Configura o registrador stvec para apontar para o tratador em Assembly */
+
     asm volatile("csrw stvec, %0" : : "r" ((uint64_t)trap_entry));
 
-    /* 2. Inicializa o timer do hardware (ex: dispara a cada 100.000 ticks) */
+    
     timer_init(100000);
 
-    /* 3. Cria as tarefas usando a função nativa do microkernel */
+    
     xTaskCreate(task1, 2048, 1);
     xTaskCreate(task2, 2048, 1);
 

@@ -11,8 +11,6 @@ trap_entry:
     sd x5, 32(sp)
     addi x5, sp, 256
     sd x5, 8(sp)
-    
-    # Continua salvando os outros normalmente
     sd x3, 16(sp)
     sd x4, 24(sp)
     sd x6, 40(sp)

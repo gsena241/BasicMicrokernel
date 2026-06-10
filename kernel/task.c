@@ -21,7 +21,6 @@ void xTaskCreate(void (*task)(void),
 
     uint64_t *sp = (uint64_t*)(t->stack + stack_size);
 
-    /* Configurar contexto inicial */
 
     t->regs[0] = (uint64_t)task;   // ra
     t->regs[1] = (uint64_t)sp;     // sp
