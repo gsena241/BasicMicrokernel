@@ -1,2 +1,4 @@
-# BasicMicrokernel
-A simple microkernel to use in OS subject and run in CodeSpace.
+# Trabalho-SO-M3
+
+**Grupo:** Arthur Fontana, Gustavo Sena, Kauã de Oliveira
+**Professor:** Felipe Viel — Engenharia da Computação — UNIVALI 2026/1
